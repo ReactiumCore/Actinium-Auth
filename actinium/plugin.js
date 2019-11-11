@@ -3,6 +3,7 @@ const PLUGIN_ROUTES = require("./routes");
 const PLUGIN_BLUEPRINTS = require("./blueprints");
 const resetRequest = require("./utils/resetRequest");
 const resetPassword = require("./utils/resetPassword");
+const tokenGen = require("./utils/tokenGenerate");
 
 const TokenSchema = {
   value: { type: "String" },
@@ -68,6 +69,18 @@ Actinium.Cloud.define(PLUGIN.ID, "password-reset", resetPassword);
 Actinium.Cloud.run('password-reset-request', { email: 'you@email.com' });
  */
 Actinium.Cloud.define(PLUGIN.ID, "password-reset-request", resetRequest);
+
+/**
+ * @api {Cloud} token-gen token-gen
+ * @apiVersion 3.1.1
+ * @apiGroup Cloud
+ * @apiName token-gen
+ * @apiDescription Generate a password reset token for the current user.
+ * @apiExample Example Usage:
+Actinium.Cloud.run('token-gen', {}, { sessionToken: 'VALID_SESSION_TOKEN' });
+ */
+Actinium.Cloud.define(PLUGIN.ID, "token-gen", tokenGen);
+Actinium.Cloud.define(PLUGIN.ID, "token-generate", tokenGen);
 
 /**
  * @api {Function} Actinium.User.resetRequest(user) User.resetRequest()
