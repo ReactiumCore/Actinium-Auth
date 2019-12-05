@@ -1,5 +1,7 @@
 # Actinium Auth
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Atomic-Reactor/Actinium-Auth.svg)](https://greenkeeper.io/)
+
 ## Getting Started
 ```
 $ npm install && cd ./ui && npm install
