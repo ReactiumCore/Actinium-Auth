@@ -1,48 +1,58 @@
-const PLUGIN = require("./meta");
-const PLUGIN_ROUTES = require("./routes");
-const PLUGIN_BLUEPRINTS = require("./blueprints");
-const resetRequest = require("./utils/resetRequest");
-const resetPassword = require("./utils/resetPassword");
-const tokenGen = require("./utils/tokenGenerate");
+const PLUGIN = require('./meta');
+const PLUGIN_ROUTES = require('./routes');
+const PLUGIN_BLUEPRINTS = require('./blueprints');
+const resetRequest = require('./utils/resetRequest');
+const resetPassword = require('./utils/resetPassword');
+const tokenGen = require('./utils/tokenGenerate');
 
 const TokenSchema = {
-  value: { type: "String" },
-  expireAt: { type: "Date" },
-  user: { type: "Pointer", targetClass: "_User" }
+    value: { type: 'String' },
+    expireAt: { type: 'Date' },
+    user: { type: 'Pointer', targetClass: '_User' },
 };
 
 const TokenActions = {
-  addField: false,
-  create: false,
-  delete: false,
-  retrieve: false,
-  update: false
+    addField: false,
+    create: false,
+    delete: false,
+    retrieve: false,
+    update: false,
 };
 
 Actinium.Plugin.register(PLUGIN, true);
 
-Actinium.Hook.register("activate", async ({ ID }) => {
-  if (ID !== PLUGIN.ID) {
-    return;
-  }
+Actinium.Hook.register('activate', async ({ ID }) => {
+    if (ID !== PLUGIN.ID) {
+        return;
+    }
 
-  Object.keys(TokenActions).forEach(action =>
-    Actinium.Capability.register(`Token.${action}`)
-  );
+    Object.keys(TokenActions).forEach(action =>
+        Actinium.Capability.register(`Token.${action}`),
+    );
 
-  Actinium.Collection.register("Token", TokenActions, TokenSchema);
+    Actinium.Collection.register('Token', TokenActions, TokenSchema);
 });
 
-Actinium.Hook.register("blueprint-defaults", blueprints => {
-  if (Actinium.Plugin.isActive(PLUGIN.ID)) {
-    PLUGIN_BLUEPRINTS.forEach(item => blueprints.push(item));
-  }
-});
+// BLUEPRINTS
+const registerBlueprints = (reg = true) => ({ ID }) => {
+    if (ID && ID !== PLUGIN.ID) return;
+    if (reg === true) {
+        PLUGIN_BLUEPRINTS.forEach(bp => Actinium.Blueprint.register(bp.ID, bp));
+    } else if (reg === false) {
+        PLUGIN_BLUEPRINTS.forEach(bp => Actinium.Blueprint.unregister(bp.ID));
+    }
+};
+// Start: Blueprints
+Actinium.Hook.register('start', registerBlueprints(true));
+// Activate: Blueprints
+Actinium.Hook.register('activate', registerBlueprints(true));
+// Deactivate: Blueprints
+Actinium.Hook.register('deactivate', registerBlueprints(false));
 
-Actinium.Hook.register("route-defaults", routes => {
-  if (Actinium.Plugin.isActive(PLUGIN.ID)) {
-    PLUGIN_ROUTES.forEach(item => routes.push(item));
-  }
+Actinium.Hook.register('route-defaults', routes => {
+    if (Actinium.Plugin.isActive(PLUGIN.ID)) {
+        PLUGIN_ROUTES.forEach(item => routes.push(item));
+    }
 });
 
 /**
@@ -56,7 +66,7 @@ Actinium.Hook.register("route-defaults", routes => {
  * @apiExample Example Usage:
 Actinium.Cloud.run('password-reset', { token: 'Ox3Nlojb', password: 'my.New-P455w0rd!' });
  */
-Actinium.Cloud.define(PLUGIN.ID, "password-reset", resetPassword);
+Actinium.Cloud.define(PLUGIN.ID, 'password-reset', resetPassword);
 
 /**
  * @api {Cloud} password-reset-request password-reset-request
@@ -68,7 +78,7 @@ Actinium.Cloud.define(PLUGIN.ID, "password-reset", resetPassword);
  * @apiExample Example Usage:
 Actinium.Cloud.run('password-reset-request', { email: 'you@email.com' });
  */
-Actinium.Cloud.define(PLUGIN.ID, "password-reset-request", resetRequest);
+Actinium.Cloud.define(PLUGIN.ID, 'password-reset-request', resetRequest);
 
 /**
  * @api {Cloud} token-gen token-gen
@@ -79,8 +89,8 @@ Actinium.Cloud.define(PLUGIN.ID, "password-reset-request", resetRequest);
  * @apiExample Example Usage:
 Actinium.Cloud.run('token-gen', {}, { sessionToken: 'VALID_SESSION_TOKEN' });
  */
-Actinium.Cloud.define(PLUGIN.ID, "token-gen", tokenGen);
-Actinium.Cloud.define(PLUGIN.ID, "token-generate", tokenGen);
+Actinium.Cloud.define(PLUGIN.ID, 'token-gen', tokenGen);
+Actinium.Cloud.define(PLUGIN.ID, 'token-generate', tokenGen);
 
 /**
  * @api {Function} Actinium.User.resetRequest(user) User.resetRequest()
@@ -95,11 +105,11 @@ _Note: You must have an email driver setup for this to work._
 Actinium.User.resetRequest('user@email.com');
  */
 Actinium.User.resetRequest = email =>
-  Actinium.Cloud.run(
-    "password-reset-request",
-    { email },
-    { useMasterKey: true }
-  );
+    Actinium.Cloud.run(
+        'password-reset-request',
+        { email },
+        { useMasterKey: true },
+    );
 
 /**
  * @api {Function} Actinium.User.resetPassword(token,password) User.resetPassword()
@@ -115,8 +125,8 @@ Actinium.User.resetRequest = email =>
 Actinium.User.resetPassword('dGasDdoYlh0s55cu4rpglgm6LJhuuNVg', 'sekrit');
  */
 Actinium.User.resetPassword = (token, password) =>
-  Actinium.Cloud.run(
-    "password-reset",
-    { token, password },
-    { useMasterKey: true }
-  );
+    Actinium.Cloud.run(
+        'password-reset',
+        { token, password },
+        { useMasterKey: true },
+    );
