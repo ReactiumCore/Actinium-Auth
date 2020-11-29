@@ -3,28 +3,28 @@
     "route": "/logout",
     "blueprint": "Logout",
     "meta": {
-      "builtIn": true
+      "app": "auth",
     }
   },
   {
     "route": "/login",
     "blueprint": "Login",
     "meta": {
-      "builtIn": true
+      "app": "auth",
     }
   },
   {
     "route": "/forgot",
     "blueprint": "Forgot",
     "meta": {
-      "builtIn": true
+      "app": "auth",
     }
   },
   {
     "route": "/reset/:token",
     "blueprint": "ResetPassword",
     "meta": {
-      "builtIn": true
+      "app": "auth",
     }
   }
 ]

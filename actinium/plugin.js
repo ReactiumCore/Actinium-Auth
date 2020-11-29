@@ -1,5 +1,4 @@
 const PLUGIN = require('./meta');
-const PLUGIN_ROUTES = require('./routes');
 const PLUGIN_BLUEPRINTS = require('./blueprints');
 const resetRequest = require('./utils/resetRequest');
 const resetPassword = require('./utils/resetPassword');
@@ -20,6 +19,34 @@ const TokenActions = {
 };
 
 Actinium.Plugin.register(PLUGIN, true);
+
+const PLUGIN_ROUTES = require('./routes');
+const saveRoutes = async () => {
+    for (const route of PLUGIN_ROUTES) {
+        await Actinium.Route.save(route);
+    }
+};
+
+// Update routes on startup
+Actinium.Hook.register('start', async () => {
+    if (Actinium.Plugin.isActive(PLUGIN.ID)) {
+        await saveRoutes();
+    }
+});
+
+// Update routes on plugin activation
+Actinium.Hook.register('activate', async ({ ID }) => {
+    if (ID === PLUGIN.ID) {
+        await saveRoutes();
+    }
+});
+
+// Update routes on plugin update
+Actinium.Hook.register('update', async ({ ID }) => {
+    if (ID === PLUGIN.ID) {
+        await saveRoutes();
+    }
+});
 
 Actinium.Hook.register('activate', async ({ ID }) => {
     if (ID !== PLUGIN.ID) {
@@ -48,12 +75,6 @@ Actinium.Hook.register('start', registerBlueprints(true));
 Actinium.Hook.register('activate', registerBlueprints(true));
 // Deactivate: Blueprints
 Actinium.Hook.register('deactivate', registerBlueprints(false));
-
-Actinium.Hook.register('route-defaults', routes => {
-    if (Actinium.Plugin.isActive(PLUGIN.ID)) {
-        PLUGIN_ROUTES.forEach(item => routes.push(item));
-    }
-});
 
 /**
  * @api {Cloud} password-reset password-reset
