@@ -1,6 +1,6 @@
 {
   "name": "@atomic-reactor/actinium-auth",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Actinium Authentication Plugin",
   "main": "index.js",
   "scripts": {
