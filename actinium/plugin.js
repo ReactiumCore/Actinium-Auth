@@ -23,7 +23,9 @@ Actinium.Plugin.register(PLUGIN, true);
 const PLUGIN_ROUTES = require('./routes');
 const saveRoutes = async () => {
     for (const route of PLUGIN_ROUTES) {
-        await Actinium.Route.save(route);
+        try {
+            await Actinium.Route.save(route);
+        } catch (err) {}
     }
 };
 
