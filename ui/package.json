@@ -89,7 +89,7 @@
     "regenerator-runtime": "^0.13.3",
     "run-script-os": "^1.0.7",
     "semver": "^6.3.0",
-    "serialize-javascript": "^2.1.0",
+    "serialize-javascript": "^4.0.0",
     "shallow-equals": "^1.0.0",
     "underscore": "*",
     "uuid": "^3.3.3",
