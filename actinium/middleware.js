@@ -21,4 +21,4 @@ const MW = Actinium => {
   );
 }
 
-module.exports = Actinium ? MW(Actinium) : MW;
+module.exports = Object.keys(Actinium).length > 0 ? MW(Actinium) : MW;
